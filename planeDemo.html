@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Plane Demo</title>		
+		<link rel="stylesheet" type="text/css" href="reset.css">
+		<link rel="stylesheet" type="text/css" href="planeDemo.css">
+		<script src="plane.js"></script>
+		<script>
+		
+			var myPlane;
+			var w0 = {"x": 0.0, "y": 0.0};
+			var w1 = {"x": 50.0, "y": 0.0};
+			var theta = 0;
+			
+			function init() {
+			
+				//get canvas and its container div
+				var myCanvas = document.getElementById("mainCanvas");
+				var centerDiv = document.getElementById("center");			
+				
+				//initialize canvas width/height
+				myCanvas.width = centerDiv.clientWidth;
+				myCanvas.height = centerDiv.clientHeight;
+				
+				//create new plane object
+				myPlane = new Plane(myCanvas);
+
+				//add default plane event listeners
+				window.addEventListener("resize", function() {myPlane.defaultResizeListener()});
+				centerDiv.addEventListener("mousemove", function(event) {myPlane.defaultMouseMoveListener(event)});
+				centerDiv.addEventListener("wheel", function(event) {myPlane.defaultMouseWheelListener(event)});
+				centerDiv.addEventListener("click", function(event) {myPlane.defaultMouseClickListener(event)});
+				
+				//init timer
+				setInterval(timerEvent, 33);				
+			}
+			
+			function timerEvent() {
+
+				//get screen coordinates from world coordinates
+				var s0 = myPlane.worldToScreenCoordinates(w0);
+				var s1 = myPlane.worldToScreenCoordinates(w1);
+				
+				//get 2d context
+				var c = document.getElementById("mainCanvas");
+				var ctx=c.getContext("2d");
+				
+				//clear plane canvas
+				myPlane.clear(ctx);
+				
+				//draw line with screen coordinates
+				ctx.strokeStyle = 'blue';
+				ctx.beginPath();
+				ctx.moveTo(s0.x, s0.y);
+				ctx.lineTo(s1.x, s1.y);
+				ctx.stroke();
+				myPlane.drawGrid(ctx);
+				myPlane.drawAxes(ctx);
+				
+				//rotate line world coordinates about origin
+				w1.x = 50.0*Math.cos(theta);
+				w1.y = 50.0*Math.sin(theta);
+				
+				//increase theta and wraparound
+				theta += 0.01;
+				if (theta > 2*Math.PI) {
+					theta -= 2*Math.PI;
+				}
+				
+			}
+		</script>
+	</head>
+	
+	<body onload="init();">
+		<div id="header"><p id="shit"></p></div>
+		<div id="main">
+			<div id="leftMargin">
+				<p>mouse x: <span id="mx"></span></p>
+				<p>mouse y: <span id="my"></span></p>
+			</div>
+			<div id="center"><canvas id="mainCanvas"></canvas></div>
+			<div id="rightMargin"><canvas id="otherCanvas"></canvas></div>
+		</div>
+		<div id="footer"></div>		
+	</body>
+</html>
