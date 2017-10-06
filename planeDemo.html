@@ -9,11 +9,12 @@
 		
 			var myPlane;
 			var w0 = {"x": 0.0, "y": 0.0};
-			var w1 = {"x": 50.0, "y": 0.0};
+			var w1 = {"x": 100.0, "y": 0.0};
 			var theta = 0;
 			
 			function init() {
 			
+				document.getElementById("magnitude").innerHTML = vecMagnitude(w1);
 				//get canvas and its container div
 				var myCanvas = document.getElementById("mainCanvas");
 				var centerDiv = document.getElementById("center");			
@@ -45,6 +46,8 @@
 				var c = document.getElementById("mainCanvas");
 				var ctx=c.getContext("2d");
 				
+				var m = vecMagnitude(w1);
+				
 				//clear plane canvas
 				myPlane.clear(ctx);
 				
@@ -58,8 +61,8 @@
 				myPlane.drawAxes(ctx);
 				
 				//rotate line world coordinates about origin
-				w1.x = 50.0*Math.cos(theta);
-				w1.y = 50.0*Math.sin(theta);
+				w1.x = m*Math.cos(theta);
+				w1.y = m*Math.sin(theta);
 				
 				//increase theta and wraparound
 				theta += 0.01;
@@ -67,6 +70,10 @@
 					theta -= 2*Math.PI;
 				}
 				
+			}
+			
+			function vecMagnitude(v) {
+				return Math.sqrt(v.x*v.x + v.y*v.y);
 			}
 		</script>
 	</head>
@@ -77,6 +84,7 @@
 			<div id="leftMargin">
 				<p>mouse x: <span id="mx"></span></p>
 				<p>mouse y: <span id="my"></span></p>
+				<p>mag: <span id="magnitude"></span></p>
 			</div>
 			<div id="center"><canvas id="mainCanvas"></canvas></div>
 			<div id="rightMargin"><canvas id="otherCanvas"></canvas></div>
